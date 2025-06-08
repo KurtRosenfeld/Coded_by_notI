@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Colour Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+        }
+        .plates {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .plate {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.2s;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .plate:hover {
+            transform: scale(1.05);
+        }
+        .plate.purple { background-color: #800080; }
+        .plate.red { background-color: #FF0000; }
+        .plate.dark-red { background-color: #8B0000; }
+        .plate.black { background-color: #000000; }
+        .plate span.back {
+            display: none;
+        }
+        .plate.flipped span.front {
+            display: none;
+        }
+        .plate.flipped span.back {
+            display: block;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .round-counter {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Colour Games</h1>
+    <div class="game-container">
+        <div class="round-counter">Round 1 of 5</div>
+        <div class="plates">
+            <div class="plate purple" onclick="makeChoice('purple')">
+                <span class="front">Purple</span>
+                <span class="back">Eisberg</span>
+            </div>
+            <div class="plate red" onclick="makeChoice('red')">
+                <span class="front">Red</span>
+                <span class="back">Eisberg</span>
+            </div>
+            <div class="plate dark-red" onclick="makeChoice('dark-red')">
+                <span class="front">Dark Red</span>
+                <span class="back">Eisberg</span>
+            </div>
+            <div class="plate black" onclick="makeChoice('black')">
+                <span class="front">Black</span>
+                <span class="back">Eisberg</span>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <h2>Your Choices:</h2>
+            <ul id="choices-list"></ul>
+        </div>
+    </div>
 
+    <script>
+        let currentRound = 1;
+        const totalRounds = 5;
+        const choices = [];
+        
+        function makeChoice(color) {
+            // Flip the plate
+            const plates = document.querySelectorAll('.plate');
+            plates.forEach(plate => {
+                plate.classList.add('flipped');
+                plate.style.pointerEvents = 'none'; // Disable further clicks
+            });
+            
+            // Record choice
+            choices.push(color);
+            
+            // Prepare for next round or show results
+            setTimeout(() => {
+                if (currentRound < totalRounds) {
+                    currentRound++;
+                    document.querySelector('.round-counter').textContent = 
+                        `Round ${currentRound} of ${totalRounds}`;
+                    
+                    // Reset plates for next round
+                    plates.forEach(plate => {
+                        plate.classList.remove('flipped');
+                        plate.style.pointerEvents = 'auto';
+                    });
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+        
+        function showResults() {
+            const resultsDiv = document.getElementById('results');
+            const choicesList = document.getElementById('choices-list');
+            
+            // Display all choices
+            choices.forEach((choice, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Round ${index + 1}: ${formatChoice(choice)}`;
+                choicesList.appendChild(li);
+            });
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function formatChoice(color) {
+            const colorNames = {
+                'purple': 'Purple',
+                'red': 'Red',
+                'dark-red': 'Dark Red',
+                'black': 'Black'
+            };
+            return colorNames[color];
+        }
+    </script>
+</body>
+</html>
